@@ -11,6 +11,7 @@ import 'package:diabox/utils/formatters.dart'; // Import for formatOffsetDuratio
 import 'package:diabox/theme/app_theme.dart';
 
 import 'package:diabox/widgets/edit_note_dialog.dart';
+import 'package:flutter/services.dart'; // For Clipboard
 
 class ConsumableTypeDetailScreen extends StatefulWidget {
   final ConsumableType consumableType;
@@ -1147,87 +1148,112 @@ class _ConsumableTypeDetailScreenState
                     'Aktiv: ${_notificationOffsets.length}',
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
-                  const SizedBox(height: 16),
-                  ListView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: _showFullHistory
-                            ? _usedConsumablesOfType.length
-                            : (_usedConsumablesOfType.length > 5
-                                ? 5
-                                : _usedConsumablesOfType.length),
-                        itemBuilder: (context, index) {
-                          final consumable = _usedConsumablesOfType[index];
-                          // Berechne das tatsächliche Enddatum
-                          final DateTime endDateToDisplay =
-                              consumable.deactivationDate ?? DateTime.now();
-                          final Duration durationToDisplay = endDateToDisplay
-                              .difference(consumable.startDate);
+                  const SizedBox(height: 24),
+                  const Divider(),
+                  const SizedBox(height: 24),
+                ],
+              ),
 
-                          return Card(
-                            margin: const EdgeInsets.symmetric(vertical: 4.0),
-                            child: Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          const Icon(Icons.play_arrow, size: 20),
-                                          const SizedBox(width: 8),
-                                          Text(formatDateTime(consumable.startDate)),
-                                        ],
+            // History Section
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Verlauf',
+                  style: Theme.of(context).textTheme.headlineSmall,
+                ),
+                const SizedBox(height: 16),
+                ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: _showFullHistory
+                      ? _usedConsumablesOfType.length
+                      : (_usedConsumablesOfType.length > 5
+                          ? 5
+                          : _usedConsumablesOfType.length),
+                  itemBuilder: (context, index) {
+                    final consumable = _usedConsumablesOfType[index];
+                    // Berechne das tatsächliche Enddatum
+                    final DateTime endDateToDisplay =
+                        consumable.deactivationDate ?? DateTime.now();
+                    final Duration durationToDisplay =
+                        endDateToDisplay.difference(consumable.startDate);
+
+                    return Card(
+                      margin: const EdgeInsets.symmetric(vertical: 4.0),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  children: [
+                                    const Icon(Icons.play_arrow, size: 20),
+                                    const SizedBox(width: 8),
+                                    Text(formatDateTime(consumable.startDate)),
+                                  ],
+                                ),
+                                Text(
+                                  formatDuration(durationToDisplay),
+                                  style: Theme.of(context).textTheme.titleMedium,
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 4),
+                            Row(
+                              children: [
+                                const Icon(Icons.stop, size: 20),
+                                const SizedBox(width: 8),
+                                Text(formatDateTime(endDateToDisplay)),
+                              ],
+                            ),
+                            if (consumable.notes != null && consumable.notes!.isNotEmpty) ...[
+                              const SizedBox(height: 8),
+                              InkWell(
+                                onTap: () {
+                                  Clipboard.setData(ClipboardData(text: consumable.notes!));
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(content: Text('Notiz in Zwischenablage kopiert!')),
+                                  );
+                                },
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Icon(Icons.description, size: 20),
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                      child: Text(
+                                        consumable.notes!,
+                                        style: Theme.of(context).textTheme.bodyMedium,
                                       ),
-                                      Text(
-                                        formatDuration(durationToDisplay),
-                                        style: Theme.of(context).textTheme.titleMedium,
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Row(
-                                    children: [
-                                      const Icon(Icons.stop, size: 20),
-                                      const SizedBox(width: 8),
-                                      Text(formatDateTime(endDateToDisplay)),
-                                    ],
-                                  ),
-                                  if (consumable.notes != null && consumable.notes!.isNotEmpty) ...[
-                                    const SizedBox(height: 8),
-                                    Text(
-                                      consumable.notes!,
-                                      style: Theme.of(context).textTheme.bodySmall,
                                     ),
                                   ],
-                                  Align(
-                                    alignment: Alignment.centerRight,
-                                    child: IconButton(
-                                      icon: const Icon(Icons.edit, size: 18),
-                                      onPressed: () => _showEditNoteDialog(consumable),
-                                    ),
-                                  ),
-                                ],
+                                ),
                               ),
-                            ),
-                          );
-                        },
-                      ),
-                      if (!_showFullHistory && _usedConsumablesOfType.length > 5)
-                        Center(
-                          child: IconButton(
-                            icon: const Icon(Icons.expand_more),
-                            onPressed: () {
-                              setState(() {
-                                _showFullHistory = true;
-                              });
-                            },
-                          ),
+                            ],
+                            
+                          ],
                         ),
-                    ],
+                      ),
+                    );
+                  },
+                ),
+                if (!_showFullHistory && _usedConsumablesOfType.length > 5)
+                  Center(
+                    child: IconButton(
+                      icon: const Icon(Icons.expand_more),
+                      onPressed: () {
+                        setState(() {
+                          _showFullHistory = true;
+                        });
+                      },
+                    ),
                   ),
+              ],
+            ),
           ],
         ),
       ),

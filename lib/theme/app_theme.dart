@@ -15,6 +15,8 @@ class AppTheme {
     textTheme: const TextTheme(
       titleMedium: TextStyle(fontSize: 18), // For buttons
       titleLarge: TextStyle(fontSize: 20, fontWeight: FontWeight.bold), // For section titles
+      bodyMedium: TextStyle(fontSize: 14), // Standard body text
+      bodySmall: TextStyle(fontSize: 12), // Smaller body text
     ),
   );
 
@@ -25,6 +27,8 @@ class AppTheme {
     textTheme: const TextTheme(
       titleMedium: TextStyle(fontSize: 18), // For buttons
       titleLarge: TextStyle(fontSize: 20, fontWeight: FontWeight.bold), // For section titles
+      bodyMedium: TextStyle(fontSize: 14), // Standard body text
+      bodySmall: TextStyle(fontSize: 12), // Smaller body text
     ),
   );
 }
