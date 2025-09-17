@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:diabox/screens/home_page.dart';
+import 'package:diabox/theme/app_theme.dart';
 import 'package:workmanager/workmanager.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:diabox/database_helper.dart';
@@ -128,16 +129,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Diabox',
-      theme: ThemeData(
-        brightness: Brightness.light,
-        useMaterial3: true,
-        colorSchemeSeed: Colors.blue,
-      ),
-      darkTheme: ThemeData(
-        brightness: Brightness.dark,
-        useMaterial3: true,
-        colorSchemeSeed: Colors.blue,
-      ),
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.dark, // Default to dark mode
       debugShowCheckedModeBanner: false, // Remove debug banner
       home: const HomePage(),

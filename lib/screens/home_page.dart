@@ -6,6 +6,7 @@ import 'package:diabox/screens/consumable_type_detail_screen.dart';
 import 'package:diabox/utils/extensions.dart';
 import 'package:diabox/utils/formatters.dart'; // Import the new formatters file
 import 'package:diabox/screens/settings_page.dart'; // Import the new settings page
+import 'package:diabox/theme/app_theme.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -85,20 +86,20 @@ class _HomePageState extends State<HomePage> {
 
     if (type.isFixedLifespan) {
       if (now.isAfter(endDate)) {
-        return Colors.red;
+        return AppTheme.statusRed;
       } else if (endDate.difference(now).inDays <= 2) {
-        return Colors.orange;
+        return AppTheme.statusOrange;
       } else {
-        return Colors.green;
+        return AppTheme.statusGreen;
       }
     } else {
       // Flexible lifespan
       if (now.isAfter(endDate)) {
-        return Colors.red;
+        return AppTheme.statusRed;
       } else if (endDate.difference(now).inDays <= 1) {
-        return Colors.orange;
+        return AppTheme.statusOrange;
       } else {
-        return Colors.green;
+        return AppTheme.statusGreen;
       }
     }
   }
@@ -272,9 +273,9 @@ class _HomePageState extends State<HomePage> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text(
+                                                                Text(
                                   _getRemainingTime(activeInstance, type),
-                                  style: TextStyle(color: _getStatusColor(activeInstance, type)),
+                                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: _getStatusColor(activeInstance, type)),
                                 ),
                                 Row(
                                   children: [

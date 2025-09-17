@@ -8,6 +8,7 @@ import 'package:diabox/models/active_consumable.dart';
 import 'package:workmanager/workmanager.dart';
 import 'package:flutter/cupertino.dart'; // Import for CupertinoPicker
 import 'package:diabox/utils/formatters.dart'; // Import for formatOffsetDuration
+import 'package:diabox/theme/app_theme.dart';
 
 class ConsumableTypeDetailScreen extends StatefulWidget {
   final ConsumableType consumableType;
@@ -407,7 +408,7 @@ class _ConsumableTypeDetailScreenState
       builder: (BuildContext context) {
         return Container(
           height: 300,
-          color: CupertinoColors.systemBackground.resolveFrom(context),
+          color: Theme.of(context).colorScheme.surface,
           child: Column(
             children: [
               Expanded(
@@ -504,7 +505,7 @@ class _ConsumableTypeDetailScreenState
       builder: (BuildContext context) {
         return Container(
           height: 300,
-          color: CupertinoColors.systemBackground.resolveFrom(context),
+          color: Theme.of(context).colorScheme.surface,
           child: Column(
             children: [
               Expanded(
@@ -633,20 +634,20 @@ class _ConsumableTypeDetailScreenState
 
     if (_currentConsumableType.isFixedLifespan) {
       if (now.isAfter(endDate)) {
-        return Colors.red;
+        return AppTheme.statusRed;
       } else if (endDate.difference(now).inDays <= 2) {
-        return Colors.orange;
+        return AppTheme.statusOrange;
       } else {
-        return Colors.green;
+        return AppTheme.statusGreen;
       }
     } else {
       // Flexible lifespan
       if (now.isAfter(endDate)) {
-        return Colors.red;
+        return AppTheme.statusRed;
       } else if (endDate.difference(now).inDays <= 1) {
-        return Colors.orange;
+        return AppTheme.statusOrange;
       } else {
-        return Colors.green;
+        return AppTheme.statusGreen;
       }
     }
   }
@@ -996,9 +997,9 @@ class _ConsumableTypeDetailScreenState
                     onPressed: _activateNewConsumable,
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 15),
-                      textStyle: const TextStyle(fontSize: 18),
-                      backgroundColor: Colors.green.shade200, // Grün für Start
-                      foregroundColor: Colors.black, // Schwarze Schrift für Start
+                      textStyle: Theme.of(context).textTheme.titleMedium,
+                      backgroundColor: AppTheme.statusGreenLight, // Grün für Start
+                      foregroundColor: AppTheme.onStatusColor, // Schwarze Schrift für Start
                     ),
                     child: const Text('Start'),
                   ),
@@ -1010,9 +1011,9 @@ class _ConsumableTypeDetailScreenState
                       onPressed: () => _confirmDeactivation(_activeConsumable!.id!),
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 15),
-                        textStyle: const TextStyle(fontSize: 18),
-                        backgroundColor: Colors.red.shade200, // Pastellrot für Stopp
-                        foregroundColor: Colors.black, // Schwarze Schrift für Stopp
+                        textStyle: Theme.of(context).textTheme.titleMedium,
+                        backgroundColor: AppTheme.statusRedLight, // Pastellrot für Stopp
+                        foregroundColor: AppTheme.onStatusColor, // Schwarze Schrift für Stopp
                       ),
                       child: const Text('Stopp'),
                     ),
@@ -1154,9 +1155,9 @@ class _ConsumableTypeDetailScreenState
               const SizedBox(height: 24),
 
             // Activation History Section
-            const Text(
+            Text(
               'Verlauf',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: Theme.of(context).textTheme.titleLarge,
             ),
             _usedConsumablesOfType.isEmpty
                 ? const Center(
