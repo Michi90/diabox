@@ -384,6 +384,16 @@ class _ConsumableTypeDetailScreenState
     }
   }
 
+  Future<void> _editNotificationOffset(int index, int currentOffset) async {
+    final int? newOffset = await _showNotificationOffsetSelector(context, initialOffset: currentOffset);
+    if (newOffset != null && newOffset > 0) {
+      setState(() {
+        _notificationOffsets[index] = newOffset;
+      });
+      await _updateNotificationOffsetsInDb();
+    }
+  }
+
   Future<int?> _showNotificationOffsetSelector(
     BuildContext context, {
     int? initialOffset,
@@ -1147,6 +1157,48 @@ class _ConsumableTypeDetailScreenState
                   Text(
                     'Aktiv: ${_notificationOffsets.length}',
                     style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                  const SizedBox(height: 16),
+                  ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: _notificationOffsets.length,
+                    itemBuilder: (context, index) {
+                      final offset = _notificationOffsets[index];
+                      return Card(
+                        margin: const EdgeInsets.symmetric(vertical: 4.0),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                formatOffsetDuration(offset),
+                                style: Theme.of(context).textTheme.bodyMedium,
+                              ),
+                              Row( // Group edit and delete icons
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  IconButton(
+                                    icon: const Icon(Icons.edit, size: 20),
+                                    onPressed: () => _editNotificationOffset(index, offset),
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(Icons.delete, size: 20),
+                                    onPressed: () {
+                                      setState(() {
+                                        _notificationOffsets.removeAt(index);
+                                      });
+                                      _updateNotificationOffsetsInDb();
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
                   ),
                   const SizedBox(height: 24),
                   const Divider(),
