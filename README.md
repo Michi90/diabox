@@ -14,7 +14,6 @@
 *   **Expiration Reminders:** Receive timely local notifications before items expire.
     *   **Configurable Notification Offsets:** Set multiple custom time offsets (e.g., 1 day, 3 hours) for reminders before expiration.
     *   Global toggle for notifications.
-*   **History View:** Browse a detailed history of used consumables, including their usage duration and notes.
 *   **Barcode Scanning:** Utilize the built-in barcode scanner to extract information like lot numbers for notes.
 *   **Data Persistence:** All application data is securely stored locally on the device using a SQLite database.
 *   **Data Export/Import:** Easily back up your entire app data to a JSON file and restore it, providing a convenient way to migrate data or create backups.
