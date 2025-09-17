@@ -45,11 +45,11 @@ void callbackDispatcher() async {
 
         if (notificationType == 'expiration') {
           title = '${type.name} ist abgelaufen!';
-          body = 'Dein ${type.name} ist am ${formatDateTime(activeConsumable.expectedEndDate)} abgelaufen.';
+          body = 'Dein ${type.name} ist abgelaufen!';
         } else if (notificationType == 'reminder') {
           title = 'Erinnerung: ${type.name} läuft bald ab!';
           if (offset != null) {
-            body = 'Dein ${type.name} läuft in ${formatDuration(Duration(minutes: offset))} ab.';
+            body = 'Dein ${type.name} läuft in ${formatDuration(Duration(minutes: offset))} ab.\nAlso am ${formatDateTime(activeConsumable.expectedEndDate)} !';
           } else {
             body = 'Dein ${type.name} läuft am ${formatDateTime(activeConsumable.expectedEndDate)} ab.';
           }
