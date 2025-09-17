@@ -1,7 +1,0 @@
-
-im detailscreen eines artikels kann der nutzer aktuell das benachrichtigungsfeld aufklappen.
-ich möchte das eingabefeld dort gerne entfernen und nur einen hinzufügen button haben.
-wird dieser button geclickt gibt es einen cupertino selector für tage, stunden, minuten als popup mit bestätigungsbutton.
-wird die eingestellte zeit bestätigt wird wie bisher dafür gesorgt dass die benachrichtigungen bei bedarf neu geplant werden.
-den eintrag in der liste der benachrichtigungen erweitern wir durch einen einstellungsicon (zusätzlich zum löschen icon).
-wird dieser geklickt so erscheint wieder der selector.
