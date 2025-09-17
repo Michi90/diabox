@@ -40,6 +40,7 @@ dependencies:
   workmanager: ^0.9.0+3 # For background tasks
   flutter_local_notifications: ^17.1.2 # For displaying notifications
   file_picker: ^10.3.3
+  mobile_scanner: ^7.0.1
 
 dev_dependencies:
   flutter_test:

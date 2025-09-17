@@ -5,6 +5,7 @@ class ActiveConsumable {
   DateTime expectedEndDate;
   DateTime? deactivationDate; // New field
   int isActive; // 1 for active, 0 for used/inactive
+  String? notes; // New field
 
   ActiveConsumable({
     this.id,
@@ -13,6 +14,7 @@ class ActiveConsumable {
     required this.expectedEndDate,
     this.deactivationDate,
     this.isActive = 1, // Default to active
+    this.notes,
   });
 
   Map<String, dynamic> toMap() {
@@ -23,6 +25,7 @@ class ActiveConsumable {
       'expected_end_date': expectedEndDate.toIso8601String(),
       'deactivation_date': deactivationDate?.toIso8601String(), // Store as ISO 8601 String
       'is_active': isActive,
+      'notes': notes,
     };
   }
 
@@ -36,11 +39,12 @@ class ActiveConsumable {
           ? DateTime.parse(map['deactivation_date'])
           : null,
       isActive: map['is_active'] ?? 1, // Default to 1 if null
+      notes: map['notes'],
     );
   }
 
   @override
   String toString() {
-    return 'ActiveConsumable{id: $id, consumableTypeId: $consumableTypeId, startDate: $startDate, expectedEndDate: $expectedEndDate, deactivationDate: $deactivationDate, isActive: $isActive}';
+    return 'ActiveConsumable{id: $id, consumableTypeId: $consumableTypeId, startDate: $startDate, expectedEndDate: $expectedEndDate, deactivationDate: $deactivationDate, isActive: $isActive, notes: $notes}';
   }
 }

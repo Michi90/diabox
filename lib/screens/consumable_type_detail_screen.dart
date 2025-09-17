@@ -10,6 +10,8 @@ import 'package:flutter/cupertino.dart'; // Import for CupertinoPicker
 import 'package:diabox/utils/formatters.dart'; // Import for formatOffsetDuration
 import 'package:diabox/theme/app_theme.dart';
 
+import 'package:diabox/widgets/edit_note_dialog.dart';
+
 class ConsumableTypeDetailScreen extends StatefulWidget {
   final ConsumableType consumableType;
 
@@ -276,9 +278,6 @@ class _ConsumableTypeDetailScreenState
             Duration(minutes: offset),
           );
           if (scheduledTime.isAfter(DateTime.now())) {
-            Workmanager().cancelByUniqueName(
-              'reminder_notification_${newActiveConsumableId}_$offset',
-            );
             Workmanager().registerOneOffTask(
               'reminder_notification_${newActiveConsumableId}_$offset',
               'consumableNotification',
@@ -640,7 +639,8 @@ class _ConsumableTypeDetailScreenState
       } else {
         return AppTheme.statusGreen;
       }
-    } else {
+    }
+    else {
       // Flexible lifespan
       if (now.isAfter(endDate)) {
         return AppTheme.statusRed;
@@ -695,6 +695,7 @@ class _ConsumableTypeDetailScreenState
         expectedEndDate: newExpectedEndDate,
         deactivationDate: activeConsumable.deactivationDate,
         isActive: activeConsumable.isActive,
+        notes: activeConsumable.notes,
       );
 
       await _dbHelper.updateActiveConsumable(updatedActiveConsumable);
@@ -920,6 +921,21 @@ class _ConsumableTypeDetailScreenState
     }
   }
 
+  Future<void> _showEditNoteDialog(ActiveConsumable consumable) async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return EditNoteDialog(
+          consumable: consumable,
+          dbHelper: _dbHelper,
+          onNoteUpdated: _loadData,
+        );
+      },
+    );
+  }
+
+  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -1021,6 +1037,34 @@ class _ConsumableTypeDetailScreenState
                 ],
               ],
             ),
+            // Note Section
+            if (_activeConsumable != null)
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 24),
+                  const Divider(),
+                  const SizedBox(height: 24),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Notiz',
+                        style: Theme.of(context).textTheme.headlineSmall,
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.edit),
+                        onPressed: () => _showEditNoteDialog(_activeConsumable!),
+                      ),
+                    ],
+                  ),
+                  if (_activeConsumable!.notes != null && _activeConsumable!.notes!.isNotEmpty)
+                    Text(
+                      _activeConsumable!.notes!,
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                ],
+              ),
             const SizedBox(height: 24),
             const Divider(),
             const SizedBox(height: 24),
@@ -1107,68 +1151,7 @@ class _ConsumableTypeDetailScreenState
                   ListView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
-                    itemCount: _notificationOffsets.length,
-                    itemBuilder: (context, index) {
-                      final offset = _notificationOffsets[index];
-                      return ListTile(
-                        title: Text(formatOffsetDuration(offset)),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            IconButton(
-                              icon: const Icon(Icons.settings),
-                              onPressed: () async {
-                                final int? editedOffset =
-                                    await _showNotificationOffsetSelector(
-                                      context,
-                                      initialOffset: offset,
-                                    );
-                                if (editedOffset != null && editedOffset > 0) {
-                                  setState(() {
-                                    _notificationOffsets[index] = editedOffset;
-                                  });
-                                  await _updateNotificationOffsetsInDb();
-                                }
-                              },
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.delete),
-                              onPressed: () async {
-                                setState(() {
-                                  _notificationOffsets.removeAt(index);
-                                });
-                                await _updateNotificationOffsetsInDb();
-                              },
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
-                ],
-              ),
-            if (_notificationsEnabledGlobally)
-              const SizedBox(height: 24),
-            if (_notificationsEnabledGlobally)
-              const Divider(),
-            if (_notificationsEnabledGlobally)
-              const SizedBox(height: 24),
-
-            // Activation History Section
-            Text(
-              'Verlauf',
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-            _usedConsumablesOfType.isEmpty
-                ? const Center(
-                    child: Text('Noch keine Aktivierungen vorhanden.'),
-                  )
-                : Column(
-                    children: [
-                      ListView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: _showFullHistory
+                    itemCount: _showFullHistory
                             ? _usedConsumablesOfType.length
                             : (_usedConsumablesOfType.length > 5
                                 ? 5
@@ -1183,37 +1166,50 @@ class _ConsumableTypeDetailScreenState
 
                           return Card(
                             margin: const EdgeInsets.symmetric(vertical: 4.0),
-                            child: ListTile(
-                              title: Row(
-                                mainAxisSize: MainAxisSize.min,
+                            child: Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Icon(Icons.play_arrow, size: 20),
-                                  const SizedBox(width: 8),
-                                  Flexible(
-                                    child: Text(
-                                      formatDateTime(consumable.startDate),
-                                      style: Theme.of(context).textTheme.bodyMedium,
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          const Icon(Icons.play_arrow, size: 20),
+                                          const SizedBox(width: 8),
+                                          Text(formatDateTime(consumable.startDate)),
+                                        ],
+                                      ),
+                                      Text(
+                                        formatDuration(durationToDisplay),
+                                        style: Theme.of(context).textTheme.titleMedium,
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Row(
+                                    children: [
+                                      const Icon(Icons.stop, size: 20),
+                                      const SizedBox(width: 8),
+                                      Text(formatDateTime(endDateToDisplay)),
+                                    ],
+                                  ),
+                                  if (consumable.notes != null && consumable.notes!.isNotEmpty) ...[
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      consumable.notes!,
+                                      style: Theme.of(context).textTheme.bodySmall,
+                                    ),
+                                  ],
+                                  Align(
+                                    alignment: Alignment.centerRight,
+                                    child: IconButton(
+                                      icon: const Icon(Icons.edit, size: 18),
+                                      onPressed: () => _showEditNoteDialog(consumable),
                                     ),
                                   ),
                                 ],
-                              ),
-                              subtitle: Row(
-                                children: [
-                                  const Icon(Icons.stop, size: 20),
-                                  const SizedBox(width: 8),
-                                  Flexible(
-                                    child: Text(
-                                      formatDateTime(endDateToDisplay),
-                                      style: Theme.of(
-                                        context,
-                                      ).textTheme.bodyMedium,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              trailing: Text(
-                                formatDuration(durationToDisplay),
-                                style: Theme.of(context).textTheme.titleMedium,
                               ),
                             ),
                           );

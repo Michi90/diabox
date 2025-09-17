@@ -23,7 +23,7 @@ class DatabaseHelper {
 
     return await openDatabase(
       databasePath,
-      version: 7,
+      version: 8,
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
     );
@@ -59,6 +59,7 @@ class DatabaseHelper {
         expected_end_date TEXT NOT NULL,
         is_active INTEGER NOT NULL DEFAULT 1,
         deactivation_date TEXT,
+        notes TEXT,
         FOREIGN KEY (consumable_type_id) REFERENCES consumable_types(id) ON DELETE CASCADE
       )
     ''');
@@ -125,6 +126,9 @@ class DatabaseHelper {
             value TEXT
         )
       ''');
+    }
+    if (oldVersion < 8) {
+      await db.execute('ALTER TABLE active_consumables ADD COLUMN notes TEXT');
     }
   }
 
