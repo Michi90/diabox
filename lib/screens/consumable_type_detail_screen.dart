@@ -1205,6 +1205,7 @@ class _ConsumableTypeDetailScreenState
                             const SizedBox(height: 4),
                             Row(
                               children: [
+                                
                                 const Icon(Icons.stop, size: 20),
                                 const SizedBox(width: 8),
                                 Text(formatDateTime(endDateToDisplay)),

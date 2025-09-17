@@ -4,12 +4,20 @@
 
 ## Key Features
 
-*   **Consumable Tracking:** Define and manage different types of consumable items.
-*   **Lifespan Management:** Supports both fixed and flexible lifespans for items.
-*   **Stock Management:** Keep track of the quantity of available items.
-*   **Expiration Reminders:** Receive local notifications before items expire.
-*   **Data Persistence:** All data is stored locally on the device using SQLite.
-*   **Data Export/Import:** Users can back up and restore their data.
+*   **Consumable Type Management:** Define and manage various types of consumable items, specifying their default lifespan (fixed or flexible).
+*   **Active Consumables Tracking:** Monitor currently active consumable items, including their start date, expected end date, and deactivation date.
+    *   **Editable Start Dates:** Adjust the start date of an active consumable, which automatically recalculates its expected end date.
+    *   **Notes:** Add and view notes for active and used consumables, with the ability to copy notes to the clipboard.
+*   **Stock Management:** Efficiently manage the quantity of available items for each consumable type.
+    *   Add or remove stock items.
+    *   Automatic stock decrement upon activating a new consumable (if enabled).
+*   **Expiration Reminders:** Receive timely local notifications before items expire.
+    *   **Configurable Notification Offsets:** Set multiple custom time offsets (e.g., 1 day, 3 hours) for reminders before expiration.
+    *   Global toggle for notifications.
+*   **History View:** Browse a detailed history of used consumables, including their usage duration and notes.
+*   **Barcode Scanning:** Utilize the built-in barcode scanner to extract information like lot numbers for notes.
+*   **Data Persistence:** All application data is securely stored locally on the device using a SQLite database.
+*   **Data Export/Import:** Easily back up your entire app data to a JSON file and restore it, providing a convenient way to migrate data or create backups.
 
 ## Technologies Used
 
@@ -18,6 +26,8 @@
 *   **Database**: SQLite (`sqflite` package)
 *   **Background Tasks**: `workmanager` package
 *   **Notifications**: `flutter_local_notifications` package
+*   **Barcode Scanning**: `mobile_scanner` package
+*   **File Picker**: `file_picker` package
 
 ## Getting Started
 
@@ -47,8 +57,10 @@ To get a local copy up and running, follow these simple steps.
 The project follows a standard Flutter application architecture:
 
 *   `lib/`: Contains all the Dart source code.
-    *   `main.dart`: The entry point of the application.
-    *   `database_helper.dart`: Manages all SQLite database interactions.
-    *   `models/`: Contains the data models for the application (`ConsumableType`, `StockItem`, etc.).
-    *   `screens/`: Contains the application's UI screens.
-    *   `utils/`: Contains utility functions and helper classes.
+    *   `main.dart`: The entry point of the application, handling initialization of app, database, and background services.
+    *   `database_helper.dart`: Manages all SQLite database interactions, including schema creation, CRUD operations, and data migration.
+    *   `models/`: Defines the data models for the application, such as `ConsumableType`, `StockItem`, and `ActiveConsumable`.
+    *   `screens/`: Contains the application's UI screens, including `HomePage`, `ConsumableTypeDetailScreen`, `SettingsPage`, and `BarcodeScannerScreen`.
+    *   `utils/`: Contains utility functions and helper classes, such as formatters and GS1 barcode parser.
+    *   `widgets/`: Reusable UI components like `EditNoteDialog`.
+    *   `theme/`: Defines the application's color scheme and text themes.
