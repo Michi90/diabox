@@ -960,14 +960,14 @@ class _ConsumableTypeDetailScreenState
                   Padding(
                     padding: const EdgeInsets.only(bottom: 8.0),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         // Startzeit mit Edit-Icon
                         Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
-                              'Start: ${formatDateTime(_activeConsumable!.startDate)}',
+                              formatDateTime(_activeConsumable!.startDate),
                               style: Theme.of(context).textTheme.bodyMedium,
                             ),
                             IconButton(
@@ -980,7 +980,7 @@ class _ConsumableTypeDetailScreenState
                         ),
                         // Endzeit
                         Text(
-                          'Ende: ${formatDateTime(_activeConsumable!.expectedEndDate)}',
+                          formatDateTime(_activeConsumable!.expectedEndDate),
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
                       ],
@@ -1197,36 +1197,24 @@ class _ConsumableTypeDetailScreenState
                                   ),
                                 ],
                               ),
-                              subtitle: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                              subtitle: Row(
                                 children: [
-                                  Row(
-                                    children: [
-                                      const Icon(Icons.stop, size: 20),
-                                      const SizedBox(width: 8),
-                                      Flexible(
-                                        child: Text(
-                                          formatDateTime(endDateToDisplay),
-                                          style: Theme.of(
-                                            context,
-                                          ).textTheme.bodyMedium,
-                                        ),
-                                      ),                                    ],
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    'Dauer: ${formatDuration(durationToDisplay)}',
-                                    style: Theme.of(context).textTheme.bodySmall,
+                                  const Icon(Icons.stop, size: 20),
+                                  const SizedBox(width: 8),
+                                  Flexible(
+                                    child: Text(
+                                      formatDateTime(endDateToDisplay),
+                                      style: Theme.of(
+                                        context,
+                                      ).textTheme.bodyMedium,
+                                    ),
                                   ),
                                 ],
                               ),
-                              trailing: consumable.isActive == 1
-                                  ? IconButton(
-                                      icon: const Icon(Icons.check_circle_outline),
-                                      onPressed: () =>
-                                          _deactivateConsumable(consumable.id!),
-                                    )
-                                  : null,
+                              trailing: Text(
+                                formatDuration(durationToDisplay),
+                                style: Theme.of(context).textTheme.titleMedium,
+                              ),
                             ),
                           );
                         },

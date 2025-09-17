@@ -1,14 +1,14 @@
 String formatDuration(Duration duration) {
   String twoDigits(int n) => n.toString().padLeft(2, "0");
   String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
-  String twoDigitHours = twoDigits(duration.inHours.remainder(24));
 
   if (duration.inDays > 0) {
     final days = duration.inDays;
     final dayString = days == 1 ? 'Tag' : 'Tage';
-    return '$days $dayString $twoDigitHours:$twoDigitMinutes';
+    final hours = duration.inHours.remainder(24);
+    return '$days $dayString $hours:$twoDigitMinutes';
   } else { // If duration is less than a day, only show hours and minutes
-    return '$twoDigitHours:$twoDigitMinutes';
+    return '${duration.inHours}:$twoDigitMinutes';
   }
 }
 
