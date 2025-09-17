@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:diabox/database_helper.dart';
 import 'package:diabox/models/active_consumable.dart';
 import 'package:diabox/screens/barcode_scanner_screen.dart';
+import 'package:diabox/utils/gs1_parser.dart';
 
 class EditNoteDialog extends StatefulWidget {
   final ActiveConsumable consumable;
@@ -68,9 +69,17 @@ class _EditNoteDialogState extends State<EditNoteDialog> {
               MaterialPageRoute(builder: (context) => const BarcodeScannerScreen()),
             );
             if (scannedBarcode != null && scannedBarcode is String) {
-              setState(() {
-                _notesController.text = scannedBarcode;
-              });
+              final lotNumber = Gs1Parser.extractLotNumber(scannedBarcode);
+              if (lotNumber != null) {
+                setState(() {
+                  _notesController.text = lotNumber;
+                });
+              } else {
+                // If no lot number found, maybe put the whole barcode or a message
+                setState(() {
+                  _notesController.text = scannedBarcode; // Fallback to full barcode
+                });
+              }
             }
           },
         ),

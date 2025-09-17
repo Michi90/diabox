@@ -50,6 +50,7 @@ class _BarcodeScannerScreenState extends State<BarcodeScannerScreen> {
           final List<Barcode> barcodes = capture.barcodes;
           if (barcodes.isNotEmpty) {
             final String? barcode = barcodes.first.rawValue;
+            print('Scanned barcode rawValue: $barcode');
             if (barcode != null) {
               cameraController.stop(); // Stop camera immediately
               Navigator.pop(context, barcode); // Return the scanned barcode
